@@ -68,7 +68,8 @@ END_DOCUMENTATION
 #   See more:
 #   https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
 
-export LAMBDA_LAYER_PKGS_DIR="/opt/python";
+export OTEL_LAYER_PKGS_DIR="/opt/python"
+export LAMBDA_LAYER_PKGS_DIR="$OTEL_LAYER_PKGS_DIR:/opt/python/lib/$(echo ${AWS_EXECUTION_ENV#*_*_})/site-packages";
 
 # - Set Lambda Layer python packages in PYTHONPATH so `opentelemetry-instrument`
 #   script can find them (it needs to find `opentelemetry` to find the auto
@@ -151,4 +152,4 @@ export _HANDLER="otel_wrapper.lambda_handler";
 
 # - Call the upstream auto instrumentation script
 
-python3 $LAMBDA_LAYER_PKGS_DIR/bin/opentelemetry-instrument "$@"
+python3 $OTEL_LAYER_PKGS_DIR/bin/opentelemetry-instrument "$@"
